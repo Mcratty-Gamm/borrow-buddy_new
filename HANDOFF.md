@@ -1,9 +1,13 @@
 # Handoff: Borrow Buddy (สรุปส่งต่องาน)
 
-อัปเดตล่าสุด: 2026-09-25 (เสร็จครบทุกเฟส) อ่านไฟล์นี้ก่อน แล้วอ่าน [CONTEXT.md](./CONTEXT.md), [design.md](./design.md), [Tasks.md](./Tasks.md) เพื่อทำงานต่อ
+อัปเดตล่าสุด: 2026-09-25 (เวอร์ชัน 2: โค้ดเสร็จ รอผู้ดูแลตั้งค่า Auth และตรวจรับในเบราว์เซอร์) อ่านไฟล์นี้ก่อน แล้วอ่าน [CONTEXT.md](./CONTEXT.md), [design.md](./design.md), [Tasks.md](./Tasks.md) เพื่อทำงานต่อ
 
 ## โปรเจ็กต์คืออะไร
-เว็บหน้าเดียวสำหรับเจ้าของคนเดียว บันทึกว่าเพื่อนยืมของอะไร เมื่อไร ต้องคืนเมื่อไร และกดคืนแล้วได้ เทคโนโลยี: React 19 + Vite 8 (JavaScript), Vitest 5, เก็บข้อมูลใน localStorage
+เว็บหน้าเดียวสำหรับเจ้าของ บันทึกว่าเพื่อนยืมของอะไร เมื่อไร ต้องคืนเมื่อไร และกดคืนแล้วได้
+- เวอร์ชัน 1 (เฟส 1 – 4): เก็บข้อมูลใน localStorage
+- เวอร์ชัน 2 (เฟส 5 – 8): เก็บ Loan ใน Supabase, เข้าสู่ระบบด้วยอีเมล + รหัสผ่าน (ปิดสมัครเอง), RLS เห็นเฉพาะ Loan ของตัวเอง, นำเข้าข้อมูลเดิมจาก localStorage ได้ครั้งเดียว, ยังไม่มีการลบ Loan
+
+เทคโนโลยี: React 19 + Vite 8 (JavaScript), Vitest 5, `@supabase/supabase-js` 2.117
 
 ## กติกาที่ต้องทำตาม
 - ตอบเป็นภาษาไทยสุภาพ กระชับ ประหยัด token
@@ -13,65 +17,89 @@
 - ห้ามแสดงข้อมูลส่วนตัว
 - **งาน git ทั้งหมดในโปรเจ็กต์นี้ให้มอบ agent `git-manager` ทำ** ไม่รัน git เองผ่าน Bash (แม้แต่ `git status`) และไม่ push
 - ผู้ใช้สั่งให้ **commit ทุกครั้งที่ทำ task เสร็จ** ข้อความ commit ภาษาอังกฤษ รูปแบบ `feat: T3.x ...` ปิดท้ายด้วย `Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>`
-- ก่อนตั้งค่า/ใช้ไลบรารี (Vite, React, Vitest) ให้ตรวจเอกสารล่าสุดผ่าน Context7 (React: `/websites/react_dev`)
+- ก่อนตั้งค่า/ใช้ไลบรารี (Vite, React, Vitest, supabase-js) ให้ตรวจเอกสารล่าสุดผ่าน Context7 หรือ Supabase docs (React: `/websites/react_dev`)
 - รอให้ commit ของ task หนึ่งเสร็จก่อนเริ่มแก้ไฟล์ของ task ถัดไป เพื่อไม่ให้งานปนกัน
+- **ห้ามใส่ service_role / secret key ในโค้ดฝั่งเว็บ** ใช้เฉพาะ publishable key
 
 ## สถานะงาน
 
-| Task | สถานะ | Commit |
+**เวอร์ชัน 1 (เฟส 1 – 4): เสร็จครบ** hash ด้านล่างมาจาก repository เดิม (`borrow-buddy`) ใน repository นี้ (`borrow-buddy_new`) มีแค่ commit `0303015 Initial commit`
+
+| Task | สถานะ | Commit (repo เดิม) |
 |---|---|---|
 | T1.1 – T1.3 ตั้งโปรเจ็กต์ | เสร็จ | `f440dbc`, `c25eca7`, `f068441` |
-| T2.1 `dateFormat.js` | เสร็จ | `ae9e1f5` |
-| T2.2 `getLoanStatus` | เสร็จ | `d33bef9` |
-| T2.3 `getDaysOverdue` | เสร็จ | `ef3ae10` |
-| T2.4 `validateLoan` | เสร็จ | `2866281` |
-| T2.5 `groupLoans` | เสร็จ | `43e48e0` |
-| T2.6 `filterLoansByFriend` | เสร็จ | `49a8c48` |
-| T2.7 `markReturned` / `unmarkReturned` | เสร็จ | `4d58674` |
-| T2.8 `storage.js` | เสร็จ | `36f05e8` |
-| T3.1 `App.jsx` state + โหลด/บันทึก | เสร็จ | `e868549` |
-| T3.2 `LoanForm.jsx` | เสร็จ | `32066f2` |
-| T3.3 `SearchBox.jsx` | เสร็จ | `4c8fb6e` |
-| T3.4 `LoanList.jsx` / `LoanItem.jsx` | เสร็จ | `79f12ea` |
-| T3.5 ปุ่มคืนแล้ว/ยกเลิกการคืน/แก้ไข | เสร็จ | `8a29978` |
-| T3.6 `ThemeToggle.jsx` (โหมดมืด) | เสร็จ | `8641fa5` |
-| T3.7 สไตล์ (มือถือ + สถานะ) | เสร็จ | `51bef52` |
-| T4.1 `npm test` ผ่านทั้งหมด (68 ข้อ) | เสร็จ | `f7ee8af` |
-| T4.2 ทดลองเพิ่ม/แก้ไข/กดคืน/ยกเลิกคืน/รีเฟรช | เสร็จ | `b0e2673` |
-| T4.3 ทดลองกรณีขอบ | เสร็จ | `8c2908e` |
-| T4.4 มือถือและโหมดมืด | เสร็จ | `408e31e` |
-| T4.5 ไม่มีฟีเจอร์นอกขอบเขต + ศัพท์ตรง CONTEXT.md | เสร็จ | `566becf` |
+| T2.1 – T2.8 ตรรกะใน `src/lib` | เสร็จ | `ae9e1f5` … `36f05e8` |
+| T3.1 – T3.7 UI | เสร็จ | `e868549` … `51bef52` |
+| T4.1 – T4.5 ตรวจรับ | เสร็จ | `f7ee8af` … `566becf` |
 
-**ทุก task ใน `Tasks.md` (เฟส 1 – 4) เสร็จครบแล้ว** `npm test` ผ่านทั้งหมด 68 ข้อ (4 ไฟล์) `npm run lint` และ `npm run build` ผ่าน
-commit แรกของ repository คือ `ee81221` (เอกสาร + `.gitignore`) สาขา `main` ยังไม่ push repository อยู่ที่ `borrow-buddy/.git` (ไม่ใช่โฟลเดอร์แม่)
+**เวอร์ชัน 2 (เฟส 5 – 8)**
+
+| Task | สถานะ | หมายเหตุ |
+|---|---|---|
+| T5.1 supabase-js + `.env.example` | เสร็จ | `.env.local` สร้างแล้ว (git ไม่เก็บ) |
+| T5.2 migration ตาราง `loans` | เสร็จ | apply ขึ้น Supabase แล้ว |
+| T5.3 migration RLS | เสร็จ | apply ขึ้น Supabase แล้ว |
+| T5.4 ตั้งค่า Auth + สร้างบัญชีเจ้าของ | **รอผู้ดูแล** | ตอนนี้ `disable_signup: false` (ยังสมัครเองได้) |
+| T5.5 Security Advisor + ตรวจ RLS | **ค้างบางส่วน** | Advisor ไม่มีคำเตือน, ตรวจ RLS ด้วย SQL ผ่านทุกข้อ เหลือตรวจ signUp ถูกปฏิเสธ (หลัง T5.4) |
+| T6.1 – T6.5 ตรรกะ + เทสต์ | เสร็จ | |
+| T7.1 – T7.6 UI | เสร็จ | ยังไม่ได้ลองในเบราว์เซอร์ด้วยบัญชีจริง |
+| T8.1 `npm test` | เสร็จ | 114 ข้อ (9 ไฟล์), lint และ build ผ่าน |
+| T8.2 – T8.6 ตรวจรับในเบราว์เซอร์ | **ยังไม่ทำ** | ต้องมีบัญชีเจ้าของก่อน T8.6 ตรวจแล้วบางส่วน: bundle ไม่มี secret key, ไม่มีการเรียก `signUp` |
+
+**งานเวอร์ชัน 2 ยังไม่ได้ commit** (เซสชันที่ทำไม่มี agent `git-manager`) ไฟล์ที่เปลี่ยน/เพิ่มทั้งหมดยังค้างอยู่ใน working tree
 
 ## สิ่งที่ต้องทำต่อ
-ไม่มี task ค้างใน `Tasks.md` สิ่งที่รอการตัดสินใจของผู้ใช้:
+1. commit งานเวอร์ชัน 2 ผ่าน `git-manager` (ถามผู้ใช้ว่าจะแยก commit ต่อ task หรือรวม)
+2. ผู้ดูแลทำ T5.4 ใน Supabase Dashboard:
+   - Authentication → Sign In / Providers → ปิด "Allow new users to sign up"
+   - Authentication → Users → Add user (ติ๊ก Auto Confirm) สร้างบัญชีเจ้าของ
+3. ตรวจ T5.5 ข้อที่เหลือ: `GET /auth/v1/settings` ต้องได้ `disable_signup: true` และเรียก signUp แล้วถูกปฏิเสธ
+4. ตรวจรับ T8.2 – T8.6 ในเบราว์เซอร์ (ต้องมีบัญชีทดสอบที่สองสำหรับ T8.3)
+
+สิ่งที่รอการตัดสินใจของผู้ใช้:
 - push ขึ้น remote (ยังไม่มีการสั่ง ห้าม push เอง)
 - ลบไฟล์เทมเพลตที่ไม่ใช้แล้ว (`src/assets/*`, `public/icons.svg`) ต้องถามก่อน
-- ฟีเจอร์นอกขอบเขต (ลบ Loan, แจ้งเตือน, เลื่อนกำหนด, รูปภาพ, สำรองข้อมูล) ตาม design ข้อ 10 ให้ทบทวน `CONTEXT.md` ก่อนเพิ่ม
+- ฟีเจอร์นอกขอบเขต (ลบ Loan, รีเซ็ตรหัสผ่าน, แจ้งเตือน ฯลฯ) ตาม design ข้อ 12 ให้ทบทวน `CONTEXT.md` ก่อนเพิ่ม
 
-ข้อจำกัดของการตรวจรับ: ตรวจมือถือด้วย iframe จำลองความกว้าง (360 – 390px) ไม่ใช่เครื่องจริง ส่วน component ไม่มีเทสต์อัตโนมัติ (Vitest ครอบคลุมเฉพาะ `src/lib`) ตรวจด้วยมือในเบราว์เซอร์
+## Supabase
+- โปรเจ็กต์: `https://boaouyryodmwtcvgkvqu.supabase.co` (เชื่อมผ่าน Supabase MCP ได้)
+- ตาราง `public.loans`: `id` uuid, `owner_id` (default `auth.uid()`, FK `auth.users` **ไม่ cascade** จึงลบบัญชีที่ยังมี Loan ไม่ได้ ตั้งใจไว้), `friend_name`, `item_name`, `borrowed_date`, `due_date`, `returned_date`, `created_at` มี check constraint ชื่อห้ามว่างและลำดับวันที่ + index `owner_id`
+- RLS: SELECT/INSERT/UPDATE สำหรับ `authenticated` เมื่อ `owner_id = (select auth.uid())` ไม่มี policy DELETE, เพิกถอนสิทธิ์ทั้งหมดจาก `anon` และ DELETE จาก `authenticated`
+- migration ในเครื่อง: `supabase/migrations/20260925000001_create_loans.sql`, `20260925000002_loans_rls.sql` (ตรงกับที่ apply แล้ว)
+- วิธีตรวจ RLS ที่ใช้: `DO` block จำลองผู้ใช้ด้วย `set_config('request.jwt.claims', …)` + `set_config('role', …)` แล้วจบด้วย `raise exception` เพื่อย้อนกลับทุกอย่าง (ไม่ทิ้งข้อมูลทดสอบ)
+- Performance Advisor มีแค่ INFO "unused index" ของ `loans_owner_id_idx` เพราะตารางยังว่าง ไม่ต้องแก้
 
-หมายเหตุ: มี git-manager ตัวหนึ่งเคยรายงานผิดว่า `borrow-buddy` ไม่ใช่ git repository ทั้งที่ `.git` มีอยู่ ให้รัน git ด้วย `git -C "<พาธ borrow-buddy>"` และห้าม `git init`
-
-วิธีทดสอบในเบราว์เซอร์: dev server `npm run dev` ที่ http://localhost:5173/ ใส่ข้อมูลทดสอบผ่าน localStorage คีย์ `borrow-buddy:loans` แล้ว **ล้างข้อมูลทดสอบทุกครั้งหลังตรวจ** (ทั้งคีย์ `borrow-buddy:loans` และ `borrow-buddy:theme`)
+## วิธีทดสอบในเบราว์เซอร์
+dev server `npm run dev` ที่ http://localhost:5173/ (ต้องมี `.env.local`) เข้าสู่ระบบด้วยบัญชีเจ้าของ
+- ทดสอบนำเข้าข้อมูลเดิม: ใส่ข้อมูลใน localStorage คีย์ `borrow-buddy:loans` แล้วรีเฟรช ถ้าจะให้แถบขึ้นใหม่ให้ลบคีย์ `borrow-buddy:imported`
+- **ล้างข้อมูลทดสอบทุกครั้งหลังตรวจ** ทั้ง localStorage (`borrow-buddy:loans`, `borrow-buddy:imported`, `borrow-buddy:theme`) และแถวทดสอบในตาราง `loans` (ลบได้ผ่าน SQL ของผู้ดูแลเท่านั้น เพราะ RLS ไม่ให้ลบ) ถามผู้ใช้ก่อนลบข้อมูลใน Supabase
 
 ## โครงโค้ดปัจจุบัน
-`src/lib` (ตรรกะล้วน มีเทสต์): `today` เป็นสตริง ISO `YYYY-MM-DD` ที่ส่งเข้าฟังก์ชันเสมอ
+`src/lib` (ตรรกะล้วน มีเทสต์): `today` เป็นสตริง ISO `YYYY-MM-DD` ที่ส่งเข้าฟังก์ชันเสมอ ฟังก์ชันที่คุยกับ Supabase รับ `client` เป็นพารามิเตอร์
 - `loanRules.js`: `STATUS`, `STATUS_LABEL`, `getLoanStatus`, `getDaysOverdue`, `validateLoan`, `groupLoans`, `filterLoansByFriend`, `markReturned`, `unmarkReturned`
-- `storage.js`: `loadLoans(storage)` → `{ loans, warning }` อ่านอย่างเดียว, `saveLoans(loans, storage)` → `null` หรือข้อความเตือนไทย (คีย์ `borrow-buddy:loans`)
+- `supabaseClient.js`: `createSupabaseClient(env)` โยน `CONFIG_ERROR` เมื่อไม่มีค่า env
+- `loanMapper.js`: `fromRow(row)`, `toRow(loan, { includeId })` (ไม่ส่ง `owner_id`)
+- `loanRepo.js`: `fetchLoans`, `createLoan`, `updateLoan`, `importLoans` (upsert `ignoreDuplicates` ตาม `id`) คืน `{ loans | loan | inserted }` หรือ `{ error: { message, sessionExpired } }`
+- `auth.js`: `signIn` (คืน null หรือข้อความไทย), `signOut` (scope `local`), `watchSession` (ได้เซสชันเดิมทันทีจาก INITIAL_SESSION), `toSignInMessage` ไม่มี `signUp`
+- `legacyImport.js`: `findLegacyLoans`, `prepareImport` (คัดรายการผิดกติกา, id ไม่ใช่ UUID สร้างใหม่), `isImported`, `markImported` (คีย์ `borrow-buddy:imported`) ไม่ลบข้อมูลเดิม
+- `storage.js`: (เวอร์ชัน 1) ตอนนี้ใช้แค่ `loadLoans` ผ่าน `legacyImport` ส่วน `saveLoans` ไม่ถูกใช้แล้วแต่ยังเก็บไว้พร้อมเทสต์
 - `dateFormat.js`: `formatThaiDate(iso)`, `toIsoDate(date)` (วันที่ท้องถิ่น)
-- `theme.js`: `getInitialTheme`, `saveTheme`, `toggleTheme`, `THEME` (คีย์ `borrow-buddy:theme`)
+- `theme.js`: `getInitialTheme`, `saveTheme`, `toggleTheme`, `THEME` (คีย์ `borrow-buddy:theme` ยังอยู่ใน localStorage)
 
-`src/components` (ไม่มีเทสต์ ตรวจด้วยมือในเบราว์เซอร์): `LoanForm`, `LoanList`, `LoanItem`, `SearchBox`, `ThemeToggle`
+`src/components` (ไม่มีเทสต์ ตรวจด้วยมือในเบราว์เซอร์): `LoginForm`, `AccountBar`, `ImportBanner`, `LoanForm`, `LoanList`, `LoanItem`, `SearchBox`, `ThemeToggle`
+- `LoanForm` และ `LoanItem`: `onSave` / `onMarkReturned` / `onUnmarkReturned` เป็น async คืน `null` หรือข้อความผิดพลาด ปิดปุ่มระหว่างรอ ไม่สำเร็จคงข้อมูลในฟอร์มไว้
 
-`src/App.jsx`: เก็บ state `loans`, `warning`, `editingId`, `query`, `theme` ทุกการเปลี่ยน Loan ผ่าน `changeLoans` (บันทึกทุกครั้ง) **ไม่ใช้ `useEffect` บันทึก** เพราะจะเขียนรายการว่างทับข้อมูลเสียตอนเปิดหน้า (design ข้อ 8) ธีมตั้งด้วย `useLayoutEffect` บน `data-theme` ของ `<html>`
+`src/App.jsx`:
+- `client` สร้างครั้งเดียวระดับโมดูล ถ้าไม่มี env แสดง `CONFIG_ERROR`
+- `App`: state `session` (`undefined` = กำลังตรวจ, `null` = หน้าเข้าสู่ระบบ), `notice`, `theme` ธีมตั้งด้วย `useLayoutEffect` บน `data-theme` ของ `<html>`
+- `OwnerHome` (ใน App.jsx) ใส่ `key={session.user.id}` ออกจากระบบ/เปลี่ยนบัญชีแล้ว state Loan ถูกล้างเอง อัปเดต state หลังเซิร์ฟเวอร์ตอบสำเร็จเท่านั้น (ไม่ optimistic) เซสชันหมดอายุเรียก `onSessionExpired` → ออกจากระบบ + แจ้งบนหน้าเข้าสู่ระบบ
 
 ## ข้อตัดสินใจและสิ่งที่ควรรู้
 - `npm test` = `vitest run --passWithNoTests` (จบเองไม่ค้าง watch) มี `npm run test:watch` แยกไว้ให้
-- วันที่เก็บเป็นสตริง ISO `YYYY-MM-DD` เทียบด้วยสตริงตรง ๆ ได้
-- ฟังก์ชัน storage รับ `storage` เป็นพารามิเตอร์ เพื่อทดสอบด้วย storage จำลองโดยไม่ต้องใช้ jsdom (Vitest ใช้สภาพแวดล้อม node)
+- วันที่เก็บเป็นสตริง ISO `YYYY-MM-DD` เทียบด้วยสตริงตรง ๆ ได้ ในฐานข้อมูลเป็นชนิด `date`
+- ตรวจความถูกต้องสองชั้น: `validateLoan` ในแอป และ check constraint ในฐานข้อมูล
+- เทสต์ใช้ storage / Supabase client จำลอง ไม่ต้องใช้ jsdom (Vitest ใช้สภาพแวดล้อม node)
+- `.env.local` มี URL + publishable key (เปิดเผยได้ตามปกติของฝั่งเว็บ) และอยู่ใน `.gitignore` แล้ว
 - `index.css` (ตัวแปรสี + ธีม `data-theme`) และ `App.css` (สไตล์ component) ถูกเขียนทับจากเทมเพลตแล้ว
 - ไฟล์เทมเพลตที่ไม่ถูกใช้แล้ว แต่ยังอยู่: `src/assets/*` (`hero.png`, `react.svg`, `vite.svg`) และ `public/icons.svg` การลบต้องถามผู้ใช้ก่อน
 - `package-lock.json` ถูก commit ไว้ ไม่ได้อยู่ใน `.gitignore`
