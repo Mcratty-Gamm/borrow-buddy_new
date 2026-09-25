@@ -10,7 +10,7 @@ import {
 } from '../lib/loanRules.js'
 
 // หนึ่งรายการ Loan พร้อมปุ่ม: คืนแล้ว (เฉพาะที่ยังไม่คืน), ยกเลิกการคืน (เฉพาะที่คืนแล้ว), แก้ไข
-// ไม่มีปุ่มลบ
+// ไม่มีปุ่มลบ onMarkReturned/onUnmarkReturned คืน null เมื่อสำเร็จ หรือข้อความผิดพลาด
 export default function LoanItem({ loan, today, onMarkReturned, onUnmarkReturned, onEdit }) {
   const status = getLoanStatus(loan, today)
   const daysOverdue = getDaysOverdue(loan, today)
@@ -18,12 +18,21 @@ export default function LoanItem({ loan, today, onMarkReturned, onUnmarkReturned
 
   const [returnDate, setReturnDate] = useState(today)
   const [errors, setErrors] = useState([])
+  const [saving, setSaving] = useState(false)
+
+  // ปิดปุ่มระหว่างรอเซิร์ฟเวอร์ ไม่สำเร็จแสดงข้อความใต้รายการ
+  const save = async (action) => {
+    setSaving(true)
+    const saveError = await action()
+    setSaving(false)
+    setErrors(saveError ? [saveError] : [])
+  }
 
   const handleMarkReturned = () => {
     const found = validateLoan(markReturned(loan, today, returnDate))
     setErrors(found)
     if (found.length > 0) return
-    onMarkReturned(loan, returnDate)
+    save(() => onMarkReturned(loan, returnDate))
   }
 
   return (
@@ -48,8 +57,13 @@ export default function LoanItem({ loan, today, onMarkReturned, onUnmarkReturned
               onChange={(e) => setReturnDate(e.target.value)}
             />
           </label>
-          <button type="button" className="mark-returned" onClick={handleMarkReturned}>
-            คืนแล้ว
+          <button
+            type="button"
+            className="mark-returned"
+            disabled={saving}
+            onClick={handleMarkReturned}
+          >
+            {saving ? 'กำลังบันทึก…' : 'คืนแล้ว'}
           </button>
         </div>
       )}
@@ -63,11 +77,11 @@ export default function LoanItem({ loan, today, onMarkReturned, onUnmarkReturned
 
       <div className="loan-actions">
         {isReturned && (
-          <button type="button" onClick={() => onUnmarkReturned(loan)}>
-            ยกเลิกการคืน
+          <button type="button" disabled={saving} onClick={() => save(() => onUnmarkReturned(loan))}>
+            {saving ? 'กำลังบันทึก…' : 'ยกเลิกการคืน'}
           </button>
         )}
-        <button type="button" onClick={() => onEdit(loan)}>
+        <button type="button" disabled={saving} onClick={() => onEdit(loan)}>
           แก้ไข
         </button>
       </div>
