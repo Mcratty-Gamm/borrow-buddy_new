@@ -56,8 +56,8 @@
 - [x] T5.1 ติดตั้ง `@supabase/supabase-js`, สร้าง `.env.example` (`VITE_SUPABASE_URL`, `VITE_SUPABASE_PUBLISHABLE_KEY`) และตรวจว่า `.env.local` อยู่ใน `.gitignore`
 - [x] T5.2 เขียน migration ใน `supabase/migrations/`: ตาราง `loans` ตาม design.md ข้อ 4 (constraint ชื่อห้ามว่าง, ลำดับวันที่, FK `owner_id`, index)
 - [x] T5.3 migration RLS: เปิด RLS, policy SELECT/INSERT/UPDATE สำหรับ `authenticated` ตาม `owner_id = (select auth.uid())`, ไม่มี policy DELETE และเพิกถอนสิทธิ์ DELETE
-- [ ] T5.4 ตั้งค่า Auth: เปิดเฉพาะ Email, ปิดการสมัครสมาชิกเอง แล้วผู้ดูแลสร้างบัญชีเจ้าของใน Dashboard (ขั้นนี้ผู้ดูแลทำเอง)
-- [ ] T5.5 ตรวจ Security Advisor ไม่มีคำเตือน และตรวจ RLS ด้วยมือตาม design.md ข้อ 11 (สองบัญชีทดสอบ, anon, DELETE, owner_id ของคนอื่น, signUp ถูกปฏิเสธ)
+- [x] T5.4 ตั้งค่า Auth: เปิดเฉพาะ Email, ปิดการสมัครสมาชิกเอง แล้วผู้ดูแลสร้างบัญชีเจ้าของใน Dashboard (ขั้นนี้ผู้ดูแลทำเอง)
+- [x] T5.5 ตรวจ Security Advisor ไม่มีคำเตือน และตรวจ RLS ด้วยมือตาม design.md ข้อ 11 (สองบัญชีทดสอบ, anon, DELETE, owner_id ของคนอื่น, signUp ถูกปฏิเสธ)
 
 - **เสร็จเมื่อ:** ตารางและ RLS ใช้งานได้ ผ่านการตรวจความปลอดภัยทุกข้อ
 
